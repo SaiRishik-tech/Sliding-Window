@@ -1,0 +1,138 @@
+so after struggling with differrent sliding window problems with different varities i got fed up and didnt code .
+then every problem i faced i could tell that its bruteforce and optimal i wasnt sure i implemented correctly and i didnt .
+i kept on solving 
+saw the soltuions understood how did they appraoch tried replicating their thinking exactly . practiced the code . understood it line by line everytime i faield to write a correct code .
+
+unitil i cam e across this problem 
+Count Number of Nice Subarrays
+which invovled previous concept knowlege and i exactly could code .  built my confidence . although not 100% but yeah i finally came across writing a ssolution. 
+so teh magic works as you keep on doing and understanding.
+
+class Solution {
+public:
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        int maxlen=0;
+        int left=0;
+        int oddcount=0;
+        vector<int>currArr;
+
+        for(int right=0;right<nums.size();right++)
+        {
+            currArr.push_back(nums[right]);
+            if(nums[right]%2!=0)
+            {
+                oddcount++;
+            }
+            if(oddcount==k)
+            {
+                int currlen=right-left+1;
+                maxlen=max(currlen,maxlen);
+            }
+            else if (oddcount>k)
+            {
+               currArr.erase(currArr.begin());
+                left++;
+
+            }
+        }
+        return maxlen;
+        
+    }
+};
+
+
+this is what i could code . although dfailed two test casess . but gave me confidence.
+so now i dry run and know the exact error
+
+
+class Solution {
+public:
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        int maxcount=0;
+        int left=0;
+        int oddcount=0;
+        vector<int>currArr;
+
+        for(int right=0;right<nums.size();right++)
+        {
+            currArr.push_back(nums[right]);
+            if(nums[right]%2!=0)
+            {
+                oddcount++;
+            }
+            if(oddcount==k)
+            {
+               maxcount++;
+
+            }
+            else if (oddcount>k)
+            {
+               currArr.erase(currArr.begin());
+                
+                if (currArr[left] % 2 !=0)
+                {
+                    oddcount--;
+                }
+                left++;
+
+            }
+        }
+        return maxcount;
+        
+    }
+};
+
+but there are some issues as well]
+
+
+seems we have to use an unordered map or prefix sum is optimal to check how many times a given odd occuured
+
+Here's the clear breakdown (rephrased in simpler terms):
+cpp
+Copy
+Edit
+unordered_map<int, int> countMap;
+countMap[0] = 1;   // Base case: 0 odd numbers seen once
+int odd = 0;       // Running count of odd numbers
+int result = 0;    // Final answer
+🚶 Step-by-Step:
+cpp
+Copy
+Edit
+for (int num : nums) {
+    if (num % 2 != 0) odd++;  // Increment odd count if current num is odd
+❓ Why check countMap[odd - k]?
+Let’s say odd = 5, and we want subarrays with exactly 3 odd numbers.
+
+Then odd - k = 2.
+
+If we’ve seen odd = 2 happen 2 times before, then there are 2 subarrays that end at the current index and have exactly 3 odds.
+
+cpp
+Copy
+Edit
+    if (countMap.find(odd - k) != countMap.end()) {
+        result += countMap[odd - k];  // Add how many such subarrays exist
+    }
+📌 Finally:
+cpp
+Copy
+Edit
+    countMap[odd]++;  // Record current odd count for future use
+}
+🔚 Final return:
+cpp
+Copy
+Edit
+return result;  // Total number of nice subarrays with exactly k odd numbers
+🧠 So what is countMap[odd]++ doing?
+It’s saying: "Hey, I’ve now seen this odd count one more time." So it will help for the future values when we check odd - k.
+
+✅ In Short:
+You understood it 90% right, just needed clarification on:
+
+Why countMap[odd - k] gives the number of subarrays
+
+Why we do countMap[odd]++ — to prepare for the next iterations
+
+Let me know if you want a dry run example with values.
